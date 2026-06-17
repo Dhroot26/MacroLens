@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MacroLens — Sign In</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f1ec;--surface:#fff;--surface2:#faf8f4;--border:#e6e1d8;--border2:#d4cdc0;--text:#1c1a17;--muted:#8c857b;--accent:#2d7a3a;--green:#2d7a3a;--blue:#2e7fa3;--sh-lg:0 8px 40px rgba(28,26,23,.14)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.5;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E")}
+
+.brand{flex:1;background:#1c1a17;padding:60px;display:flex;flex-direction:column;justify-content:center;min-width:0}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:34px;letter-spacing:-.03em;color:#fff;margin-bottom:12px}
+.logo span{color:var(--accent)}
+.tagline{font-size:15px;color:rgba(255,255,255,.4);margin-bottom:48px;line-height:1.7}
+.feat{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.feat strong{display:block;font-size:13.5px;font-weight:600;color:#fff;margin-bottom:2px}
+.feat span{font-size:12px;color:rgba(255,255,255,.35)}
+
+.auth-panel{width:460px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:40px 32px;overflow-y:auto}
+.auth-card{width:100%;max-width:390px}
+.auth-logo-sm{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;letter-spacing:-.03em;color:var(--text);margin-bottom:28px;display:none}
+.auth-logo-sm span{color:var(--accent)}
+h1{font-family:'Syne',sans-serif;font-weight:800;font-size:26px;letter-spacing:-.02em;margin-bottom:4px}
+.sub{font-size:14px;color:var(--muted);margin-bottom:26px}
+
+.tabs{display:flex;gap:4px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:22px}
+.tab{flex:1;padding:8px;font-family:'DM Sans',sans-serif;font-size:13.5px;font-weight:600;color:var(--muted);background:none;border:none;border-radius:7px;cursor:pointer;transition:all .15s}
+.tab.active{background:var(--surface);color:var(--text);box-shadow:0 1px 4px rgba(28,26,23,.08)}
+
+.group{margin-bottom:15px}
+.lbl{display:block;font-size:12px;font-weight:600;color:var(--text);margin-bottom:5px}
+.inp{width:100%;background:var(--surface2);border:1.5px solid var(--border2);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;transition:border-color .15s}
+.inp:focus{border-color:var(--accent);background:var(--surface)}
+.pw-wrap{position:relative}
+.pw-wrap .inp{padding-right:44px}
+.pw-eye{position:absolute;right:13px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted)}
+
+.err{background:rgba(200,50,50,.08);border:1px solid rgba(200,50,50,.3);border-radius:9px;padding:10px 14px;font-size:13px;color:#b93232;margin-bottom:15px;display:none}
+.err.show{display:block}
+
+.btn-main{width:100%;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:13px;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-main:hover:not(:disabled){background:#236130;transform:translateY(-1px);box-shadow:0 4px 16px rgba(45,122,58,.35)}
+.btn-main:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.spin{width:16px;height:16px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .65s linear infinite;display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+#loginForm,#registerForm{display:none}
+#loginForm.active,#registerForm.active{display:block}
+
+@media(max-width:780px){.brand{display:none}.auth-panel{width:100%;padding:32px 20px}.auth-logo-sm{display:block}}
+</style>
+</head>
+<body>
+
+<div class="brand">
+  <div class="logo">Macro<span>Lens</span></div>
+  <div class="tagline">AI-powered food tracker.<br>Photograph your meal and get instant macros.</div>
+  <div class="feat"><div class="feat-text"><strong>Instant food detection</strong><span>Detects every food item in your photo</span></div></div>
+  <div class="feat"><div class="feat-text"><strong>Ingredient breakdown</strong><span>See what's in each detected dish</span></div></div>
+  <div class="feat"><div class="feat-text"><strong>Accurate macros</strong><span>Protein, carbs and fat from 900,000+ foods</span></div></div>
+  <div class="feat"><div class="feat-text"><strong>Portion estimation</strong><span>Estimates real serving size from your photo</span></div></div>
+  <div class="feat"><div class="feat-text"><strong>Daily tracking</strong><span>Log meals and track goals throughout the day</span></div></div>
+</div>
+
+<div class="auth-panel">
+  <div class="auth-card">
+    <div class="auth-logo-sm">Macro<span>Lens</span></div>
+    <h1 id="authTitle">Welcome back</h1>
+    <p class="sub" id="authSub">Sign in to start tracking</p>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('login')">Sign In</button>
+      <button class="tab" onclick="switchTab('register')">Create Account</button>
+    </div>
+
+    <div class="err" id="errBox"></div>
+
+    <!-- LOGIN -->
+    <div id="loginForm" class="active">
+      <div class="group"><label class="lbl">Email</label><input type="email" id="lEmail" class="inp" placeholder="you@example.com" autocomplete="email"></div>
+      <div class="group"><label class="lbl">Password</label>
+        <div class="pw-wrap">
+          <input type="password" id="lPw" class="inp" placeholder="••••••••" autocomplete="current-password">
+          <button class="pw-eye" onclick="togglePw('lPw',this)">👁</button>
+        </div>
+      </div>
+      <button class="btn-main" id="loginBtn" onclick="doLogin()">
+        <div class="spin" id="lSpin"></div><span id="lTxt">Sign In</span>
+      </button>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="registerForm">
+      <div class="group"><label class="lbl">Full name</label><input type="text" id="rName" class="inp" placeholder="Your name" autocomplete="name"></div>
+      <div class="group"><label class="lbl">Email</label><input type="email" id="rEmail" class="inp" placeholder="you@example.com" autocomplete="email"></div>
+      <div class="group"><label class="lbl">Password</label>
+        <div class="pw-wrap">
+          <input type="password" id="rPw" class="inp" placeholder="Min. 6 characters" autocomplete="new-password">
+          <button class="pw-eye" onclick="togglePw('rPw',this)">👁</button>
+        </div>
+      </div>
+      <div class="group"><label class="lbl">Confirm password</label>
+        <div class="pw-wrap">
+          <input type="password" id="rPwC" class="inp" placeholder="Repeat password" autocomplete="new-password">
+          <button class="pw-eye" onclick="togglePw('rPwC',this)">👁</button>
+        </div>
+      </div>
+      <button class="btn-main" id="regBtn" onclick="doRegister()">
+        <div class="spin" id="rSpin"></div><span id="rTxt">Create Account</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+function switchTab(t) {
+  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('active',['login','register'][i]===t));
+  document.getElementById('loginForm').classList.toggle('active',t==='login');
+  document.getElementById('registerForm').classList.toggle('active',t==='register');
+  document.getElementById('authTitle').textContent = t==='login'?'Welcome back':'Create account';
+  document.getElementById('authSub').textContent   = t==='login'?'Sign in to start tracking':'Start tracking your macros';
+  clearErr();
+}
+function togglePw(id,btn){
+  const i=document.getElementById(id);
+  i.type=i.type==='password'?'text':'password';
+  btn.textContent=i.type==='password'?'👁':'🔒';
+}
+function showErr(m){const e=document.getElementById('errBox');e.textContent=m;e.classList.add('show')}
+function clearErr(){document.getElementById('errBox').classList.remove('show')}
+function setLoading(btnId,spinId,txtId,on){
+  document.getElementById(btnId).disabled=on;
+  document.getElementById(spinId).style.display=on?'block':'none';
+  document.getElementById(txtId).style.opacity=on?'0':'1';
+}
+
+async function doLogin(){
+  const email=document.getElementById('lEmail').value.trim();
+  const pw=document.getElementById('lPw').value;
+  if(!email||!pw){showErr('Enter email and password');return}
+  setLoading('loginBtn','lSpin','lTxt',true); clearErr();
+  try{
+    const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pw})});
+    const d=await r.json();
+    if(d.ok) window.location.href='/dashboard';
+    else showErr(d.error||'Login failed');
+  }catch(e){showErr('Connection error')}
+  setLoading('loginBtn','lSpin','lTxt',false);
+}
+
+async function doRegister(){
+  const name=document.getElementById('rName').value.trim();
+  const email=document.getElementById('rEmail').value.trim();
+  const pw=document.getElementById('rPw').value;
+  const pwc=document.getElementById('rPwC').value;
+  if(!name||!email||!pw){showErr('Fill in all fields');return}
+  if(pw!==pwc){showErr('Passwords do not match');return}
+  setLoading('regBtn','rSpin','rTxt',true); clearErr();
+  try{
+    const r=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password:pw})});
+    const d=await r.json();
+    if(d.ok) window.location.href='/dashboard';
+    else showErr(d.error||'Registration failed');
+  }catch(e){showErr('Connection error')}
+  setLoading('regBtn','rSpin','rTxt',false);
+}
+
+document.getElementById('lPw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+document.getElementById('rPwC').addEventListener('keydown',e=>{if(e.key==='Enter')doRegister()});
+</script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+MacroLens
+
+AI-powered food macronutrient tracker. Photograph a meal and get an instant breakdown of protein, carbohydrates, fat, and calories or enter your meal manually.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+What it does
+
+Detects food items in a photo using YOLOv8
+Classifies each item using a Food-101 trained EfficientNetV2B0 model (81.9% Top-1 accuracy)
+Estimates portion size using reference objects in the frame (forks, spoons, plates)
+Looks up macronutrients from the USDA FoodData Central database
+Lists ingredients per detected food
+Suggests recipes via the Spoonacular API
+Lets users log meals, track daily totals, and set macro goals
+Allows reporting of wrong predictions
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Features
+
+Photo upload - Drag and drop or file picker
+Camera capture - Direct from device camera
+Multi-food detection - Separate card per detected item
+Portion slider - Adjust grams,macros recalculated in real time
+AI portion estimate - Uses fork/spoon/plate as scale reference
+Confidence score - Shown per detection
+Ingredient list - Per detected food
+Meal logging - Log individual items or all at once
+Daily summary - Calories, protein, carbs, fat with goal bars
+Manual entry - Add food manually with custom macro values
+Search - USDA database search by food name
+Recipes - Spoonacular recipe dropdown per detected food
+Report prediction - Flag wrong AI predictions with your correction
+Meal history - View and delete past logged meals
+
+Authentication
+
+Register with name, email, and password (6+ characters)
+Passwords stored as SHA-256 hashes in users.json
+Session-based login, all API routes require an active session
+Meal history stored in browser localStorage - no cloud database required
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Technologies used
+
+Backend - Python 3.11, Flask 3.0
+Object detection - YOLOv8n (Ultralytics)
+Food classification - TensorFlow 2.x, EfficientNetV2B0
+Image processing - OpenCV 4.8
+Nutrition data - USDA FoodData Central API
+Recipe data - Spoonacular API
+Frontend - HTML5, CSS, Vanilla JavaScript
+Auth - Flask sessions, SHA-256 hashing 
+Storage - localStorage (meals), JSON file (users, reports)
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Requirements
+
+Python 3.11
+pip packages in requirements.txt
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Setup 
+
+Step 1: Extract the project
+MacroLens/
+    app.py
+    reports.json
+    README
+    food101_efficientnetv2b0.keras
+    food101_classes.json
+    yolov8s.pt
+    requirements.txt
+    users.json
+    templates/
+        dashboard.html
+        login.html
+
+Step 2: Install dependencies
+pip install -r requirements.txt
+
+Step 3: Add Spoonacular API key(optional)
+Add your key from spoonacular.com/food-api in
+SPOONACULAR_KEY = "YOUR_SPOONACULAR_API_KEY"
+
+Step 4: Run the app
+python app.py
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Model Files
+
+food101_efficientnetv2b0.keras = Food-101 classifier (101 food classes)
+food101_classes.json = Class label list
+yolov8s.pt = YOLOv8 food object detector
+
+If food101_efficientnetv2b0.keras is missing the app falls back to OpenCV colour analysis only.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
